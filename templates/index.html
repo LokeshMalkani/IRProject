@@ -1,0 +1,67 @@
+{% extends "parent.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+
+<script>
+
+$(document).ready(function(){
+let inputElement = document.getElementById("input"),
+    csvs = ["text/csv", "application/vnd.ms-excel"],
+    example = null;
+
+inputElement.addEventListener("change", handleFiles, false);
+
+function handleFiles() {
+    let file = this.files[0];
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+        if (csvs.indexOf(file.type) === -1) {
+            alert("Please only upload CSV files.")
+        } else {
+        	 $.blockUI();
+              setTimeout($.unblockUI, 2000)
+        	let timer = {
+            	start: moment()
+            };
+            Papa.parse(file, {
+                "download": true,
+                "header": true,
+                "dynamicTyping": true,
+                "complete": results => {
+                    if ($.fn.DataTable.isDataTable("#example")) {
+                        example.destroy();
+                        $('#example').empty();
+                    }
+                    example = $("#example").DataTable({
+                        "responsive": true,
+                        "columns": results.meta.fields.map(c => ({
+                            "title": c,
+                            "data": c,
+                            "visible": c.toLowerCase() !== "id",
+                            "default": ""
+                        })),
+                        "data": results.data,
+                        "drawCallback": function(settings) {
+                        	$.unblockUI();
+                            timer.end = moment();
+                            let duration = moment.duration(timer.end.diff(timer.start));
+                            console.log("timer", timer);
+                            console.log("duration", duration.asSeconds());
+                        }
+                    });
+                }
+            });
+        }
+    }
+}
+});
+
+</script>
+
+<input type="file" id="input">
+<hr/>
+<table id="example">
+</table>
+
+
+   
+{% endblock %}
