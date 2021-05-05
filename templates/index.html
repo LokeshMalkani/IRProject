@@ -1,67 +1,342 @@
-{% extends "parent.html" %}
-{% block title %}Welcome{% endblock %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
 
-<script>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+    content="Responsive sidebar template with sliding effect and dropdown menu based on bootstrap 3">
+  <title>Sidebar template</title>
 
-$(document).ready(function(){
-let inputElement = document.getElementById("input"),
-    csvs = ["text/csv", "application/vnd.ms-excel"],
-    example = null;
+  <!-- using online links -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+    integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+  <link rel="stylesheet" href="//malihu.github.io/custom-scrollbar/jquery.mCustomScrollbar.min.css">
 
-inputElement.addEventListener("change", handleFiles, false);
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/sidebar-themes.css">
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png" />
 
-function handleFiles() {
-    let file = this.files[0];
-    if (window.File && window.FileReader && window.FileList && window.Blob) {
-        if (csvs.indexOf(file.type) === -1) {
-            alert("Please only upload CSV files.")
-        } else {
-        	 $.blockUI();
-              setTimeout($.unblockUI, 2000)
-        	let timer = {
-            	start: moment()
-            };
-            Papa.parse(file, {
-                "download": true,
-                "header": true,
-                "dynamicTyping": true,
-                "complete": results => {
-                    if ($.fn.DataTable.isDataTable("#example")) {
-                        example.destroy();
-                        $('#example').empty();
-                    }
-                    example = $("#example").DataTable({
-                        "responsive": true,
-                        "columns": results.meta.fields.map(c => ({
-                            "title": c,
-                            "data": c,
-                            "visible": c.toLowerCase() !== "id",
-                            "default": ""
-                        })),
-                        "data": results.data,
-                        "drawCallback": function(settings) {
-                        	$.unblockUI();
-                            timer.end = moment();
-                            let duration = moment.duration(timer.end.diff(timer.start));
-                            console.log("timer", timer);
-                            console.log("duration", duration.asSeconds());
-                        }
-                    });
-                }
-            });
-        }
+  <style>
+    .carousel-item {
+      height: 300px;
     }
-}
-});
 
-</script>
+    .carousel-item img {
+      height: 300px;
+    }
 
-<input type="file" id="input">
-<hr/>
-<table id="example">
-</table>
+    #farmersImages {
+      padding-left: 200px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page-wrapper default-theme sidebar-bg bg1 toggled">
+    <nav id="sidebar" class="sidebar-wrapper">
+      <div class="sidebar-content">
+        <!-- sidebar-brand  -->
+        <div class="sidebar-item sidebar-brand">
+          <a href="#">किसान आंदोलन विश्लेषण</a>
+        </div>
+        <!-- sidebar-menu  -->
+        <div class=" sidebar-item sidebar-menu">
+          <ul>
+
+            <li>
+              <a onclick="hideAndSeek(0)">
+                <i class="fa fa-twitter-square"></i>
+                <span class="menu-text">Homepage</span>
+              </a>
+            </li>
+
+            <li>
+              <a onclick="hideAndSeek(1)">
+                <i class="fa fa-twitter-square"></i>
+                <span class="menu-text">Paste Tweet</span>
+              </a>
+            </li>
+
+            <li>
+              <a onclick="hideAndSeek(2)">
+                <i class="fa fa-notes-medical"></i>
+                <span class="menu-text">Upload CSV</span>
+              </a>
+            </li>
+
+            <li>
+              <a onclick="hideAndSeek(3)">
+                <i class="fa fa-object-group"></i>
+                <span class="menu-text">In range of date</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
 
-   
-{% endblock %}
+    <!-- page-content  -->
+    <main class="page-content pt-2">
+      <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark  justify-content-center">
+          <a class="navbar-brand" href="#">किसान आंदोलन विश्लेषण</a>
+
+          <ul class="navbar-nav">
+            <li class="nav-item active"><a class="nav-link" href="/"><span class="fa fa-home"></span>Home</a>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="help"><span class="fa fa-home"></span>Help</a></li>
+            <li class="nav-item"><a class="nav-link" href="about"><span class="fa fa-home"></span>About</a></li>
+          </ul>
+        </nav>
+      </header>
+
+
+      <div id="overlay" class="overlay"></div>
+      <div class="container-fluid p-5">
+        <div class="row">
+          <div class="form-group col-md-12">
+
+            <h2>किसान आंदोलन विश्लेषण</h2>
+
+            <div id="homepage" class="row">
+              <div id="farmersImages" class="container">
+                <div class="row">
+                  <div id="carouselExampleSlidesOnly" class="carousel slide justify-content-center"
+                    data-ride="carousel">
+                    <div class="carousel-inner">
+                      <div class="carousel-item active">
+                        <img class="d-block w-100" src="img/pic1.jpg" alt="Third slide">
+                      </div>
+
+                      <div class="carousel-item">
+                        <img class="d-block w-100" src="img/pic2.jpg" alt="Third slide">
+                      </div>
+
+                      <div class="carousel-item">
+                        <img class="d-block w-100" src="img/pic3.jpg" alt="Third slide">
+                      </div>
+
+                      <div class="carousel-item">
+                        <img class="d-block w-100" src="img/pic4.jpg" alt="Third slide">
+                      </div>
+
+                      <div class="carousel-item">
+                        <img class="d-block w-100" src="img/pic5.jpg" alt="Third slide">
+                      </div>
+
+                      <div class="carousel-item">
+                        <img class="d-block w-100" src="img/pic6.jpg" alt="Third slide">
+                      </div>
+
+                      <div class="carousel-item">
+                        <img class="d-block w-100" src="img/pic7.jpg" alt="Third slide">
+                      </div>
+
+                      <div class="carousel-item">
+                        <img class="d-block w-100" src="img/pic8.jpg" alt="Third slide">
+                      </div>
+
+                      <div class="carousel-item">
+                        <img class="d-block w-100" src="img/pic9.jpg" alt="Third slide">
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="introToFarmerProtest" class="row">
+                <p>The 2020–2021 <b>Indian farmers' protest</b> is an ongoing protest against three farm acts which were
+                  passed by the Parliament of India in September 2020. As of 21 March 2021, according to Haryana Police,
+                  there are around 40,000 committed protestors sitting at Singhu and Tikri at the Delhi border.</p>
+
+                <p>Farmer unions and their representatives have demanded that the laws be repealed and have stated that
+                  they will not accept a compromise.[10][11][12][13] Farmer leaders have welcomed the Supreme Court of
+                  India stay order on the implementation of the farm laws but rejected the committee appointed by the
+                  Supreme Court.[14] Farmer leaders have also rejected a government proposal, dated 21 January 2021, of
+                  suspending the laws for 18 months.[15] Eleven rounds of talks have taken place between the central
+                  government and farmers represented by the farm unions between 14 October 2020 and 22 January 2021; all
+                  were inconclusive.[16][15] On 3 February, farmer leaders warned of escalating the protest to
+                  overthrowing the government if the farm laws were not repealed.[17][18] The stay order on the
+                  implementation of the farm laws remains in effect,[19] and the Supreme Court appointed committee
+                  continues with its tasks related to the farm laws.[20] Six state governments (Kerala, Punjab,
+                  Chhattisgarh, Rajasthan, Delhi and West Bengal) have passed resolutions against the farms acts,[21]
+                  and
+                  three states (Punjab, Chhattisgarh and Rajasthan) have tabled counter legislation in their respective
+                  state assemblies.[22] None of the counter legislation passed the respective state governors</p>
+                <p>The acts, often called the Farm Bills,[26] have been described as "anti-farmer laws" by many farmer
+                  unions,[27][28] and politicians from the opposition also say it would leave farmers at the "mercy of
+                  corporates".[29][30] The farmers have also demanded the creation of an Minimum Support Price (MSP)
+                  bill,
+                  to ensure that corporates cannot control the prices. The government, however, maintains that the laws
+                  will make it effortless for farmers to sell their produce directly to big buyers, and stated that the
+                  protests are based on misinformation</p>
+                <p>Soon after the acts were introduced, unions began holding local protests, mostly in Punjab. After two
+                  months of protests, farmer unions—mainly from Punjab and Haryana—began a movement named Dilhi Chalo
+                  (transl. Let's go to Delhi), in which tens of thousands of farming union members marched towards the
+                  nation's capital. The Indian government ordered the police and law enforcement of various states to
+                  attack the protesters using water cannons, batons, and tear gas to prevent the farmer unions from
+                  entering into Haryana first and then Delhi. On 26 November 2020, a nationwide general strike of 250
+                  million people, as per trade unions claim, took place in support of the farmer unions.[34] On 30
+                  November, an estimated crowd of 200,000 and 300,000 farmers was converging at various border points on
+                  the way to Delhi.[35] On 21 March specific mention was made of Bengaluru, "….you (farmers) have to
+                  turn
+                  Bengaluru into Delhi. You will have to lay siege to the city from all directions".[36] Transport
+                  unions
+                  representing over 14 million truck drivers have come out in support of the farmer unions.[37] On 26
+                  January, tens of thousands of the farmers held a farmer's parade with a large convoy of tractors and
+                  drove into Delhi. The protesters deviated from the pre-sanctioned routes permitted by the Delhi
+                  Police.[38][39][40][41] The tractor rally turned into a violent protest at certain points as the
+                  protesting farmers drove through the barricades and clashed with the police.[42] Later protesters
+                  reached Red Fort and installed farmer union flags and religious flags on the mast on the rampart of
+                  the
+                  Red Fort</p>
+                <p>While a section of farmer unions have been protesting, the Indian Government claims some unions have
+                  come out in support of the farm laws.[47][48] By mid December, the Supreme Court of India had received
+                  a
+                  batch of petitions asking for removal blockades created by the protesters around Delhi.[49][50] The
+                  court also asked the government to put the laws on hold, which they refused.[51] On 4 January 2021 the
+                  court registered the first plea filed in favour of the protesting farmers.[52] Farmers have said they
+                  will not listen to the courts if told to back off.[53] Their leaders have also said that staying the
+                  farm laws is not a solution.[54] The government offered some amendments in laws.[55] On 30 December,
+                  the
+                  Indian Government agreed to two of the farmers' demands; excluding farmers from laws curbing stubble
+                  burning and dropping amendments to the new Electricity Ordinance</p>
+              </div>
+            </div>
+
+
+            <form id="pasteTweet" class="row" method="post" action="analyze_by_tweet">
+              <h3>Analyse by tweet</h3>
+
+              <div class="row w-100">
+                <textarea class="form-control form-control-sm mb-3" rows="3"
+                  placeholder="Paste your tweet here"></textarea>
+
+                <div class="align-self-end ml-auto">
+                  <button type="submit" class="btn btn-primary">
+                    Analyse
+                  </button>
+                </div>
+              </div>
+
+            </form>
+
+
+
+
+            <form id="uplodCsv" class="row" method="post" action="analyze_by_csv">
+              <h3>Upload CSV</h3>
+              <div class="row w-100">
+                <div class="form-group">
+                  <label for="exampleFormControlFile1">Select CSV File</label>
+                  <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                </div>
+                <div class="align-self-end ml-auto">
+                  <button type="submit" class="btn btn-primary">
+                    Analyse
+                  </button>
+                </div>
+              </div>
+            </form>
+
+
+
+            <form id="selectDate" class="row" method="post" action="analyze_by_date">
+              <h3>Analyze by date</h3>
+              <div class="row w-100">
+                <div class="row">
+                  <div class="col-sm-12 text-center">
+
+                    <label>Start Date</label>
+                    <input id='startDate' name='startDate' type="date" />
+                    <label>End Date</label>
+                    <input id='endDate' name='endDate' type="date" onchange="verifyDate()" />
+                  </div>
+                </div>
+
+
+                <div class="align-self-end ml-auto">
+                  <button type="submit" class="btn btn-primary">
+                    Analyse
+                  </button>
+                </div>
+              </div>
+            </form>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- page-content" -->
+  </div>
+  <!-- page-wrapper -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+    integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous">
+    </script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+    integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous">
+    </script>
+  <script src="//malihu.github.io/custom-scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
+  <script
+    src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/js/bootstrap-datetimepicker.min.js"></script>
+
+
+  <script src="js/main.js"></script>
+
+  <script>
+    // $('#farmersImages').hide();
+    // $('#introToFarmerProtest').hide();
+    //$('#homepage').hide();
+    //$('#pasteTweet').hide();
+    //$('#uplodCsv').hide();
+
+    function verifyDate() {
+      startDate = new Date($('#startDate').val());
+      endDate = new Date($('#endDate').val());
+
+      if (startDate >= endDate) {
+        alert("Select correct date");
+        window.location.reload();
+      }
+    }
+
+
+    visibleFormId = 0;
+    formIds = ['#homepage', '#pasteTweet', '#uplodCsv', '#selectDate'];
+
+    window.onload = function () {
+      for (i = 0; i < formIds.length; i++) {
+        $(formIds[i]).hide();
+      }
+
+      $(formIds[visibleFormId]).show();
+
+    }
+
+
+    $(formIds[visibleFormId]).show();
+    function hideAndSeek(i) {
+
+      if (i != visibleFormId) {
+        $(formIds[visibleFormId]).hide();
+        $(formIds[i]).show();
+        visibleFormId = i;
+      }
+    }
+
+  </script>
+</body>
+
+</html>
