@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+    content="Responsive sidebar template with sliding effect and dropdown menu based on bootstrap 3">
+  <title>Sidebar template</title>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+  <script type="text/javascript">
+
+      
+
+      function generatePdf() {
+
+
+        
+
+        html2canvas($('#statistics'), {
+          onrendered:function(canvas){
+            var imgData= canvas.toDataURL('image/png');
+
+            var doc = new jsPDF('p', 'pt', 'a4');
+
+            doc.addImage(imgData, 'PNG', 0, 0);
+
+            doc.save('statistics.pdf');
+
+            window.open(imgData);
+
+
+          }
+        })
+      }
+
+  </script>
+
+
+  
+
+
+
+
+
+  <!-- using online links -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+    integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+  <link rel="stylesheet" href="//malihu.github.io/custom-scrollbar/jquery.mCustomScrollbar.min.css">
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/sidebar-themes.css">
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png" />
+
+  <style>
+    .carousel-item {
+      height: 300px;
+    }
+
+    .carousel-item img {
+      height: 300px;
+    }
+
+    #farmersImages {
+      padding-left: 200px;
+    }
+  </style>
+</head>
+
+<style>
+
+
+
+</style>
+
+<body>
+
+  <div class="page-wrapper default-theme sidebar-bg bg1 toggled">
+    <nav id="sidebar" class="sidebar-wrapper">
+      <div class="sidebar-content" style="overflow: hidden">
+        <!-- sidebar-brand  -->
+        <div class="sidebar-item sidebar-brand">
+          <a href="#">किसान आंदोलन विश्लेषण</a>
+        </div>
+        <!-- sidebar-menu  -->
+        <div class=" sidebar-item sidebar-menu">
+          <ul>
+
+            <li>
+              <a onclick="hideAndSeek(0)">
+                <i class="fa fa-twitter-square"></i>
+                <span class="menu-text">Homepage</span>
+              </a>
+            </li>
+
+            <li>
+              <a onclick="hideAndSeek(1)">
+                <i class="fa fa-twitter-square"></i>
+                <span class="menu-text">Paste Tweet</span>
+              </a>
+            </li>
+
+            <li>
+              <a onclick="hideAndSeek(2)">
+                <i class="fa fa-notes-medical"></i>
+                <span class="menu-text">Upload CSV</span>
+              </a>
+            </li>
+
+            <li>
+              <a onclick="hideAndSeek(3)">
+                <i class="fa fa-object-group"></i>
+                <span class="menu-text">In range of date</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+
+
+</head>
+<body>
+
+<h2 style="text-align:center;">RESULTS</h2>
+
+
+
+
+
+<div id="statistics">
+
+
+            <img id="hist" src="../saved_charts/hist.png" style="margin-left: 320px" alt="Histogram" width="50%" height="50%">
+
+            
+            <img id="pie" src="../saved_charts/pie.png" style="margin-top: 30px;margin-left: 320px" alt="Pie chart" width="50%" height="50%">
+        
+
+
+            <button id="download" onclick="generatePdf()"> Download PDF </button>
+  
+
+</div>
+
+
+
+ 
+
+
+
+
+
+
+
+</body>
+</html>
