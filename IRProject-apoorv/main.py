@@ -1,0 +1,435 @@
+from flask import Flask, flash, request, redirect, url_for
+import os
+
+app = Flask(__name__,
+						static_url_path='',
+						static_folder='templates',
+						template_folder='templates'
+						)
+
+app.secret_key = "IRProjectIIITD"
+
+app.config['UPLOAD_FOLDER'] = 'UPLOAD_FOLDER'
+from flask import render_template
+from datetime import datetime
+
+
+
+# ---------------- Apoorv CODE START ----------------------------------------------------
+
+from torch.utils.data import Dataset
+import re
+import demoji
+demoji.download_codes()
+from transformers import XLNetTokenizer, XLNetModel,XLNetForSequenceClassification
+import torch
+import transformers
+from nltk.corpus import stopwords
+import joblib
+import nltk
+#nltk.download('stopwords')
+STOPWORDS = set(stopwords.words('english'))
+from transformers import XLNetTokenizer, XLNetModel, AdamW, get_linear_schedule_with_warmup, XLNetConfig
+import numpy as np
+from textblob import TextBlob
+import pandas as pd
+from nltk.tokenize import WhitespaceTokenizer
+import seaborn as sns
+import matplotlib.pyplot as plt
+from matplotlib import rc
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, classification_report
+from collections import defaultdict
+from textwrap import wrap
+from pylab import rcParams
+from nltk.tokenize import RegexpTokenizer
+from torch import nn, optim
+from keras.preprocessing.sequence import pad_sequences
+from torch.utils.data import TensorDataset,RandomSampler,SequentialSampler
+from torch.utils.data import Dataset, DataLoader
+import torch.nn.functional as F
+from nltk.corpus import wordnet
+from nltk.stem import WordNetLemmatizer
+import seaborn as sns
+# from wordcloud import WordCloud
+from werkzeug.utils import secure_filename
+
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+
+
+
+def clean_text(text):
+    	
+		'''
+        params:  pandas Series  (df['Text'])
+		return:  pandas Series cleaned
+
+		'''
+    
+		text = re.sub(r"@[A-Za-z0-9]+", ' ', text)
+		text = demoji.replace_with_desc(text, sep="")
+		text = re.sub(r"https?://[A-Za-z0-9./]+", ' ', text)
+		text = re.sub(r"[^a-zA-z.!?'0-9]", ' ', text)
+		text = re.sub('\t', ' ',  text)
+		text = re.sub(r" +", ' ', text)
+
+
+		# Removing Stopwords
+		text = " ".join([word for word in str(text).split() if word not in STOPWORDS])
+
+		
+		# Lemmatization
+		lemmatizer = WordNetLemmatizer()
+		wordnet_map = {"N":wordnet.NOUN, "V":wordnet.VERB, "J":wordnet.ADJ, "R":wordnet.ADV} # Pos tag, used Noun, Verb, Adjective and Adverb
+		pos_tagged_text = nltk.pos_tag(text.split())
+		text =  " ".join([lemmatizer.lemmatize(word, wordnet_map.get(pos[0], wordnet.NOUN)) for word, pos in pos_tagged_text])
+
+
+		#-------------------------[4.   Emoticon Replacement with text]------------------
+		tokenizer = RegexpTokenizer(r'\w+')
+		words=WhitespaceTokenizer().tokenize(text.lower())
+		df = pd.read_excel('models\Emoticons_Emojis_Text.xlsx',sheet_name='Sheet2',header=0,converters={'Emoji':str,'Text':str,'Emoticons':str})
+		dictOfEmoticons=df.set_index('Emoji')['Text'].to_dict()
+		words=[dictOfEmoticons.get(x) if x in dictOfEmoticons.keys() else x for x in words]
+		text=' '.join(words)
+
+
+	
+		return text
+
+
+
+# Helper class for XLNet model
+class Dataset_test(Dataset):
+    	
+	
+    
+    def __init__(self, tweets,tokenizer, max_len):
+        self.tweets = tweets
+        self.tokenizer = tokenizer
+        self.max_len = max_len
+    
+    def __len__(self):
+        return len(self.tweets)
+    
+    def __getitem__(self, item):
+        review = str(self.tweets[item])
+      
+
+        encoding = self.tokenizer.encode_plus(
+        review,
+        add_special_tokens=True,
+        max_length=self.max_len,
+        return_token_type_ids=False,
+        pad_to_max_length=False,
+        return_attention_mask=True,
+        return_tensors='pt',
+        )
+
+        input_ids = pad_sequences(encoding['input_ids'], maxlen=120, dtype=torch.Tensor ,truncating="post",padding="post")
+        input_ids = input_ids.astype(dtype = 'int64')
+        input_ids = torch.tensor(input_ids) 
+
+        attention_mask = pad_sequences(encoding['attention_mask'], maxlen=120, dtype=torch.Tensor ,truncating="post",padding="post")
+        attention_mask = attention_mask.astype(dtype = 'int64')
+        attention_mask = torch.tensor(attention_mask)       
+
+        return {
+        'review_text': review,
+        'input_ids': input_ids,
+        'attention_mask': attention_mask.flatten(),
+        }
+
+
+
+# function to create data loader for XLNet
+def create_data_loader_1(df, tokenizer, max_len, batch_size):
+  ds = Dataset_test(
+    tweets = df.Text.to_numpy(),
+    tokenizer=tokenizer,
+    max_len=max_len
+  )
+
+  return DataLoader(
+    ds,
+    batch_size=batch_size,
+    num_workers=1
+  )
+
+
+
+
+
+def predict_result(model,test_data,test_loader,device, submission):
+    	
+			'''
+			params:
+			   1. model:  XLNet model
+			   2. test_data: uploadedFile
+			   3. test_loader: loader for uploaded file
+			   4. device
+			   5. submission: to be generated by this function, will be saved in LABELLED_FOLDER
+			'''
+
+			model = model.eval()
+			losses = []
+			acc = 0
+			counter = 0
+			predictions = []
+		
+			with torch.no_grad():
+				for d in test_loader:
+					input_ids = d["input_ids"].reshape(1,120).to(device)
+					attention_mask = d["attention_mask"].to(device)
+					labels = torch.tensor([1]).unsqueeze(0).to(device)
+					outputs = model(input_ids=input_ids, token_type_ids=None, attention_mask=attention_mask, labels = labels)
+					loss = outputs[0]
+					logits = outputs[1]
+
+					_, prediction = torch.max(outputs[1], dim=1)
+					prediction = prediction.cpu().detach().numpy()
+					predictions.append(prediction[0])
+					
+				
+					counter += 1
+
+			predictions = np.array(predictions)
+			submission["label"] = predictions
+			submission.to_csv('LABELLED_FOLDER/{}'.format(labelled.csv), index = False)
+			print("CREATED")
+
+
+			# call analysis functions
+			df = pd.read_csv('LABELLED_FOLDER/to_label_finished.csv')
+			plotHist(df)
+			plotPie(df)
+
+
+
+
+def predict(uploadedFile):
+						'''
+						params:  csv file which is uploaded
+						return:  predictions
+
+						'''
+    
+						# read csv
+						df = pd.read_csv(uploadedFile)
+
+						# clean data
+						df['Text'] = df['Text'].apply(clean_text)
+
+						# When deploying on heroku, change the parameter to gpu
+						device = torch.device('cuda')#cpu')
+
+						
+						PRE_TRAINED_MODEL_NAME = 'xlnet-base-cased'
+						tokenizer = XLNetTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
+
+						
+						
+						config = XLNetConfig.from_json_file('models/config.json')
+						model = XLNetForSequenceClassification.from_pretrained('IRProject-apoorv\models\preTrainedXLNet_new.bin\pytorch_model.bin',config=config)
+						model = model.to(device)
+					
+
+                        # When deploying on heroku, change the parameter to gpu
+						model.load_state_dict(torch.load('models/xlnet_model .bin', map_location=torch.device('cuda')))#cpu')))
+						model = model.to(device)
+
+
+						submission=pd.DataFrame(columns={"Text","label"})
+						submission["Text"]= df["Text"]
+						df['Text'] = df['Text'].apply(clean_text)
+
+
+						test_loader = create_data_loader_1(df,tokenizer, 120, 1)
+						res = predict_result(
+													model,
+													uploadedFile,
+													test_loader,
+													device,
+													submission
+													)
+
+						df = pd.read_csv('LABELLED_FOLDER/to_label_finished.csv')
+						plotHist(df)
+						plotPie(df)
+
+
+				
+
+
+
+
+# function to generate different charts for labelled data
+def plotHist(df):
+    	
+			
+			# change labels
+
+			df['Label'] = df['Label'].replace(['PF_AG'],'PRO-FARMER/ANTI-GOVT')
+			df['Label'] = df['Label'].replace(['PG_AF'],'PRO-GOVT/ANTI-FARMER')
+
+
+
+			sns.set_style("whitegrid")
+
+
+
+			# generate countplot
+			plt.figure(figsize =(32, 20))
+			b = sns.countplot(x ='Label', data = df, palette="Set3")
+			b.axes.set_title("Count of Public Sentiments",fontsize=50)
+			b.set_xlabel("Sentiments",fontsize=32)
+			b.set_ylabel("Count",fontsize=40)
+			b.tick_params(labelsize=35)
+			plt.xticks(rotation=16)
+			
+			plt.savefig("saved_charts/hist.png")
+			#plt.show()
+		
+
+
+def plotPie(df):
+    	
+		import matplotlib.pyplot as plt
+    	
+		sns.set_style("whitegrid")
+
+
+		df['Label'] = df['Label'].replace(['PF_AG'],'Pro farmer/Anti govt')
+		df['Label'] = df['Label'].replace(['PG_AF'],'Pro govt/Anti farmer')
+
+		# generate pie chart
+	
+		L = df['Label'].value_counts().tolist()
+		
+
+
+		
+		mycolors = ["#f5f5f5", "hotpink", "#4dd0e1", "#4CAF50"]
+		plt.figure(figsize =(15, 12))
+		plt.pie(L, labels=df.Label.value_counts().index.tolist(),shadow = True, colors=mycolors, autopct='%1.2f%%', textprops={'size':22})
+		plt.title('Proportion of Public Sentiments', fontdict={'fontsize':30})
+		plt.savefig("saved_charts/pie.png")
+		#plt.show()
+		
+
+
+
+
+# def plotTemp():
+    
+# 	df = pd.read_csv('LABELLED_FOLDER/to_label_finished.csv')
+# 	plotHist(df)
+# 	plotPie(df)
+
+
+    
+
+
+# ---------------- Apoorv & Anshuman CODE END ----------------------------------------------------	                   
+
+                    
+
+
+
+
+@app.context_processor
+def inject_now():
+	return {'now': datetime.utcnow()}
+
+@app.route('/')
+def home():
+	return render_template('index.html')
+
+@app.route('/analyze_by_tweet', methods=['POST'])
+def tweetAnalyze():
+	if request.method == 'POST':
+			pasted_tweet = request.form.get("tweet")
+			cleaned_tweet = clean_text(pasted_tweet)
+
+			device = torch.device('cuda')#cpu')
+
+			PRE_TRAINED_MODEL_NAME = 'xlnet-base-cased'
+			tokenizer = XLNetTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
+
+			config = XLNetConfig.from_json_file('models/config.json')
+			model = XLNetForSequenceClassification.from_pretrained('IRProject-apoorv\models\preTrainedXLNet_new.bin\pytorch_model.bin',config=config)
+			model = model.to(device)
+
+
+			# When deploying on heroku, change the parameter to gpu
+			model.load_state_dict(torch.load('models/xlnet_model .bin', map_location=torch.device('cuda')))#cpu')))
+			model = model.to(device)
+
+			inputs = tokenizer(cleaned_tweet, return_tensors="pt").to(device)
+			labels = torch.tensor([1]).unsqueeze(0).to(device)  # Batch size 1
+			outputs = model(**inputs, labels=labels)
+			loss = outputs.loss
+			logits = outputs.logits
+			_, prediction = torch.max(outputs[1], dim=1)
+			prediction = prediction.cpu().detach().numpy()
+			sentiment = prediction[0]
+
+			if(sentiment == 0):
+    				sentiment = 'PRO-FARMER/ANTI-GOVT'
+			elif(sentiment == '1'):
+    				sentiment = 'NEUTRAL'
+			elif(sentiment == '2'):
+    				sentiment = 'PRO-GOVT/ANTI-FARMER'
+			elif(sentiment == '3'):
+    				sentiment = 'PROVOKING'
+			
+			print(sentiment)
+    				
+
+
+	return render_template('index.html', result = sentiment, tweet = pasted_tweet)
+
+@app.route('/analyze_by_csv', methods=['GET','POST'])
+def csvAnalyze():
+					if request.method == 'POST':
+    						
+							# check if the post request has the file part
+							if 'file' not in request.files:
+								return 'No file part'
+							
+
+							file = request.files['file']
+
+							if file.filename == '':
+								return 'No selected file'
+								
+							if file:
+								filename = secure_filename(file.filename)
+								file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+								print("FILE saved")
+								res = predict('UPLOAD_FOLDER/{}'.format(filename))
+							
+					
+					return render_template('results.html')
+			
+		
+
+@app.route('/analyze_by_date', methods=['POST'])
+def dateAnalyze():
+	startDate = request.form.get('startDate')
+	endDate = request.form.get('endDate')
+	print(request.form, request.args, request.values)
+	return 'Start, end dates : {} ==> {}'.format(startDate, endDate)
+
+@app.route('/about')
+def about():
+	return 'About page, will finish later'
+
+
+@app.route('/help')
+def help():
+	return 'Help page, will finish later'
+
+if __name__ == "__main__":
+	app.run(debug=True)

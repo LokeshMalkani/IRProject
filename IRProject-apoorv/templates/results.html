@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+    content="Responsive sidebar template with sliding effect and dropdown menu based on bootstrap 3">
+  <title>ANALYSIS</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+    integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+  <link rel="stylesheet" href="//malihu.github.io/custom-scrollbar/">
+  <link rel="stylesheet" type= "text/css" href="{{url_for('static', filename='main.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='sidebar-themes.css')}}">
+  <link rel="shortcut icon" type="image/png" href="{{url_for('static', filename='favicon.png')}}" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    
+  <script type="text/javascript">
+
+     $(document).ready(function(){    
+
+       //alert("HELLO");
+
+      $("#download").click(function(){
+        //alert("HELLO");
+                    $.ajax({
+          url: "downloas_csv",
+          async: true,
+          success: function (csvd) {
+              data = $.csv.toArrays(csvd);
+          },
+          dataType: "text",
+          complete: function () {
+              // call a function on complete 
+          }
+      });
+
+      });
+
+
+
+
+
+
+
+
+
+
+
+       $("#analys").click(function(){
+	
+        // console.log("Hello========================");
+	
+            var arr=JSON.parse('{{ resultlist | tojson }}');//['{{ resultlist }}'];
+	
+            var prior="";    
+	
+            for(i=0;i<arr.length;i++){
+	
+                prior=prior.concat("<li><div class='container'><h3><b>Event "+(i+1)+"</b></h3>");
+	
+                prior=prior.concat("<p><b>"+arr[i].split(":")[1]+"</b></p></div><div class='time'>");
+	
+                prior=prior.concat("<h4><b>"+arr[i].split(":")[0]+"</b></p></h4></div></li>")
+	
+                
+	
+              $(".timeline ul").html(prior)
+	
+	
+            }
+	
+            
+	
+    
+	
+	
+      });
+	
+
+     
+
+
+      // Changes By Lokesh
+    // $(document).ready(function(){  
+    //   alert("HELLO");  
+    //   "use strict";
+
+        
+    });
+
+  </script>
+<style>
+
+.timeline{
+	
+  
+	
+  -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
+	
+    -moz-animation: fadein 2s; /* Firefox < 16 */
+	
+     -ms-animation: fadein 2s; /* Internet Explorer */
+	
+      -o-animation: fadein 2s; /* Opera < 12.1 */
+	
+         animation: fadein 2s;
+	
+         /* crossOrigin: " "; */
+	
+         
+	
+}
+	
+.model-header{
+	
+  background-color: #e1d1fd !important;
+	
+}
+	
+
+
+
+img {
+    /* margin-top: 25px;
+    font-size: 21px;
+    text-align: center; */
+
+    -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
+       -moz-animation: fadein 2s; /* Firefox < 16 */
+        -ms-animation: fadein 2s; /* Internet Explorer */
+         -o-animation: fadein 2s; /* Opera < 12.1 */
+            animation: fadein 2s;
+            /* crossOrigin: " "; */
+            
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Opera < 12.1 */
+@-o-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.modal-backdrop {
+  z-index: -1;
+}
+
+.fade:not(.show) {
+    opacity: 18;
+}
+
+.bg-dark {
+
+      background-color: #419ada !important;
+	
+}
+</style>
+
+  <style>
+
+*{
+    margin:  0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+.timeline{
+    position: relative;
+    margin: 5px auto;
+    padding: 40px 0;
+    width: 1000px;
+    box-sizing: border-box;
+}
+.timeline:before{
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    background: #fcfcfc;
+    
+}
+.timeline ul{
+    margin: 0;
+    padding: 0;
+}
+.timeline ul li{
+    list-style: none;
+    position: relative;
+    width: 50%;
+    padding: 20px 40px;
+    box-sizing: border-box;
+}
+.timeline li:nth-child(odd){
+    float: left;
+    text-align: right;
+    clear: both;
+}
+.timeline li:nth-child(even){
+    float: right;
+    text-align: left;
+    clear: both;
+}
+.content{
+    padding-bottom: 20px;
+}
+.timeline li:nth-child(odd):before{
+    content: '';
+    position: absolute;
+    top: 24px;
+    right: -8px;
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(-135deg,#c850c0,#4158d0);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 3px(233,33,99,0.2);
+}
+.timeline li:nth-child(even):before{
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: -4px;
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(-135deg,#c850c0,#4148d0);
+    border-radius: 50%;
+    box-sizing: 0 0 0 3px(233,33,99,0.2);
+}
+.timeline ul li p{
+    margin: 10px 0 0;
+    padding: 0%;
+}
+.timeline ul li .time h4{
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    background: linear-gradient(-135deg,#c850c0,#4158d0);
+
+}
+.timeline li:nth-child(odd) .time{
+    position: absolute;
+    top: 12px;
+    right: -165px;
+    margin: 0;
+    padding: 8px 16px;
+    background: linear-gradient(-135deg,#c850c0,#4158d0);
+    color: #fff;
+    border-radius: 18px;
+    box-shadow: 0 0 0 3px rgba(233,33, 99, 0.3);
+}
+.timeline li:nth-child(even) .time{
+    position: absolute;
+    top: 12px;
+    left: -165px;
+    margin: 0;
+    padding: 8px 16px;
+    background: linear-gradient(-135deg,#c850c0,#4158d0);
+    color: #fff;
+    border-radius: 18px;
+    box-shadow: 0 0 0 3px rgba(233,33, 99, 0.3);
+}
+h1{
+    padding-top: 50px;
+    padding-bottom: 0px;
+    text-align: center;
+    font-size: 60px;
+    color: #c850c0;
+}
+@media(max-width:1000px){
+    .timeline{
+        width: 100%;
+    }
+}
+@media(max-width:767px){
+    h1{
+        text-align: center;
+        font-size: 40px;
+        padding: 0px 20px;
+    }
+    .timeline{
+        width: 100%;
+        padding-bottom: 0px;
+    }
+    .timeline:before{
+        left:20px
+    }
+    .timeline li:nth-child(old),
+    .timeline li:nth-child(even){
+        width: 100%;
+        text-align: left;
+        padding-left: 50px;
+        padding-bottom: 50px;
+    }
+    .timeline li:nth-child(odd):before,
+    .timeline li:nth-child(even):before{
+        top: -18px;
+        left: 16px;
+        right: inherit;
+    }
+    .timeline li:nth-child(odd).time,
+    .timeline li:nth-child(even).time{
+        top: -30px;
+        left: 50px;
+        right: inherit;
+    }
+}
+    </style>
+
+
+
+
+
+  <!-- using online links -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" -->
+    <!-- integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous"> -->
+  <link rel="stylesheet" href="//malihu.github.io/custom-scrollbar/">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='sidebar-themes.css')}}">
+  <link rel="shortcut icon" type="image/png" href="{{url_for('static', filename='favicon.png')}}" />
+
+  <style>
+    .carousel-item {
+      height: 300px;
+    }
+
+    .carousel-item img {
+      height: 300px;
+    }
+
+    #farmersImages {
+      padding-left: 200px;
+    }
+  </style>
+</head>
+
+<style>
+
+
+
+</style>
+
+<body>
+  <div id="container"></div>
+
+  <div class="page-wrapper default-theme sidebar-bg bg1 toggled">
+    <nav id="sidebar" class="sidebar-wrapper  .bg-dark">
+      <div class="sidebar-content" style="overflow: hidden">
+        <!-- sidebar-brand  -->
+        <div class="sidebar-item sidebar-brand  style="box-shadow: 10px 10px 5px #47a769;border-radius: 8%;text-align: center;">
+          <a href="#">Farmer Protest Analysis</a>
+        </div>
+        <!-- sidebar-menu  -->
+        <!-- <div class=" sidebar-item sidebar-menu">
+		</div>
+          <ul>
+
+            <li>
+              <a onclick="hideAndSeek(0)">
+                <i class="fa fa-twitter-square"></i>
+                <span class="menu-text">Homepage</span>
+              </a>
+            </li>
+
+            <li>
+              <a onclick="hideAndSeek(1)">
+                <i class="fa fa-twitter-square"></i>
+                <span class="menu-text">Paste Tweet</span>
+              </a>
+            </li>
+
+            <li>
+              <a onclick="hideAndSeek(2)">
+                <i class="fa fa-notes-medical"></i>
+                <span class="menu-text">Upload CSV</span>
+              </a>
+            </li>
+
+            <li>
+              <a onclick="hideAndSeek(3)">
+                <i class="fa fa-object-group"></i>
+                <span class="menu-text">In range of date</span>
+              </a>
+            </li>
+          </ul>
+        </div> -->
+      </div>
+    </nav>
+
+
+
+</head>
+<body>
+
+<h2 style="text-align:center;color: darkmagenta;margin-left: 345px;margin-top: 51px;"><b>Statistical Analysis</b></h2>
+
+
+
+
+<div id="editor"></div>
+
+<div id="statistics1" style="background-color: aliceblue;
+padding: 18px;      box-shadow: 10px 10px 5px grey;">
+<table style="margin-left: 127px;
+width: 59%;
+height: 29%;
+table-layout: fixed;">
+  <tr>
+
+  <td>
+
+<!-- Hello -->
+            <img id="hist"  src="{{url_for('static', filename='hist.png')}}" style="margin-top: 30px;margin-left: 224px;
+            width: 127%;
+            height: 344px" alt="Histogram" width="50%" height="50%">
+            <!-- src="img/favicon.png" -->
+            <!-- ../saved_charts/hist.png -->
+            
+            </td>
+
+            <td>          
+              <!-- <canvas id="statistics" width="578" height="200"> -->
+              <img id="pie"  w3-animate-opacity" src="{{url_for('static', filename='pie.png')}}" style="margin-top: 30px;margin-left: 224px;
+              width: 127%;
+              height: 344px" alt="Pie chart" width="50%" height="50%">
+              <!-- </canvas> -->
+            </td>
+</tr>
+</table>
+
+            
+           
+            <!-- onclick="generatePdf()" -->
+
+</div>
+
+
+<div style="width: 100%;margin-left: 50px;margin-top: 30px;">
+
+<button id="download" type="button" style="
+margin-left: 730px;
+background-color: #09bf8d;"
+class="btn btn-primary" > Download EXCEL </button>
+<a href="{{ url_for('.download_csv') }}">Download</a>
+
+
+<button type="button" style="
+margin-left: 53%;
+margin-top: 30px;" id="analys"  class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+  View The Timelines <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+  </svg>
+</button>
+
+
+</div>
+
+<div id="myModal" class="modal fade" role="dialog" style="backdrop-filter: brightness(0.5);opacity: 7;">
+  
+  <div class="modal-dialog" role="document"></div>
+  <!-- <div class="modal-dialog"> -->
+
+    <!-- Modal content    height: 360px; width: 130%; -->
+    <div class="modal-content" style="width: 64%;
+    margin-left: 337px;
+    margin-top: 84px;
+   ">
+      <div class="modal-header" style="background-color: #e1d1fd !important;">
+        <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+        <h4 class="modal-title"><b>Events In Timelines</b></h4>
+      </div>
+      <div class="modal-body">
+        <!-- <p>Some text in the modal.</p> -->
+        <div class="timeline">
+          <ul> <!-- 
+              <li>
+                  <div class="container">
+                      <h3>Day one</h3>
+                      <p>sadnjksandkjnsajkdnasjkdnajkndjkankjasnd</p>
+                  </div>
+                  <div class="time">
+                      <h4>March 2021</h4>
+                  </div>
+              </li>
+              <li>
+                  <div class="container">
+                      <h3>Day two</h3>
+                      <p>sadnjksandkjnsajkdnasjkdnajkndjkankjasnd</p>
+                  </div>
+                  <div class="time">
+                      <h4>March 2021</h4>
+                  </div>
+              </li>
+              <li>
+                  <div class="container">
+                      <h3>Day three</h3>
+                      <p>sadnjksandkjnsajkdnasjkdnajkndjkankjasnd</p>
+                  </div>
+                  <div class="time">
+                      <h4>March 2021</h4>
+                  </div>
+              </li>-->
+              <div style="clear:both;"></div>
+          </ul>
+      </div>
+    </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" style="    background-color: #bd79da; margin-right: 37%;width: 134px;color: white;"><b>Close</b></button>
+      </div>
+
+
+      
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+</body>
+</html>

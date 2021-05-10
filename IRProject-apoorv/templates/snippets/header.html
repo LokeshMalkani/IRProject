@@ -1,0 +1,188 @@
+<!-------
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$=$.noConflict();
+
+</script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+------>
+
+
+
+<script>
+var svgLogo = document.querySelector('.site-logo svg');
+svgLogo.classList.add('loaded');
+</script>
+
+
+
+
+
+<style>
+  .insider-header-wrapper {
+    text-align: center;
+  }
+  .site-logo {
+    width: 100%;
+    max-width: 126px;
+    text-align: center;
+    display: inline-block;
+  }
+
+  @keyframes dash {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .site-logo svg.loaded path {
+    animation: dash 5s linear forwards;
+  }
+</style>
+
+
+
+
+
+<style><!----Navbar---------------->
+.navbar {
+  overflow: hidden;
+  background-color: #ff7336f5 !important;
+  font-family: Arial, Helvetica, sans-serif;
+   
+  
+}
+
+.navbar a {
+  float: left;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease-in-out;
+}
+.navbar a:hover, .dropdown:hover .dropbtn {
+  background-color: #ff4b07;
+   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
+}
+
+
+
+
+
+
+
+  #owl-demo .item{
+      margin: 3px;
+    }
+    #owl-demo .item img{
+      display: block;
+      width: 100%;
+      height: 141px;
+	  border: solid 1px #555;
+  background-color: #eed;
+  box-shadow: 10px -10px 5px  rgba(0,0,0,0.6);
+  -moz-box-shadow: 10px -10px 5px  rgba(0,0,0,0.6);
+  -webkit-box-shadow: 10px -10px 5px  rgba(0,0,0,0.6);
+  -o-box-shadow: 10px -10px 5px  rgba(0,0,0,0.6);
+  border-radius:25px;
+	  
+	  
+    }
+	
+	#owl-demo .item img:hover{
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
+	 transform: scale(1.5);
+      
+    }
+	
+	.header {
+    background-color: #efe92ae0;
+    color: #000000;
+    padding: 15px;
+    height: 50% !important;
+}
+</style>
+
+
+
+
+<script>
+  $(document).ready(function() {
+     
+      $("#owl-demo").owlCarousel({
+     
+          autoPlay: 3000, //Set AutoPlay to 3 seconds
+     
+          items : 4,
+          itemsDesktop : [1199,3],
+          itemsDesktopSmall : [979,3]
+     
+      });
+     
+    });
+
+</script>
+
+<div class="header">
+
+
+
+<table style="width: 100%;">
+<tr>
+<td>
+<div class="site-logo">
+<svg width="100%" viewBox="0 0 626.59695 418.37405" class="loaded">
+<path id="logo-line1" d="M36.9,311.45C36.9,311.45,44.28166666666667,358.0733333333333,67.9,332.12C91.51833333333335,306.1666666666667,147.61166666666668,167.90833333333333,178.61,155.73C209.60833333333335,143.55166666666665,234.08666666666664,248.4716666666667,253.89,259.05C273.6933333333333,269.62833333333333,284.8833333333333,221.41333333333333,297.43,219.2C309.9766666666667,216.98666666666665,313.79333333333335,253.39666666666668,329.17,245.77C344.5466666666667,238.14333333333335,366.44166666666666,165.32166666666666,389.69,173.44C412.93833333333333,181.55833333333334,440.12333333333333,297.06333333333333,468.66,294.48C497.1966666666667,291.8966666666667,539.2616666666667,166.79666666666668,560.91,157.94C582.5583333333333,149.08333333333331,598.55,241.34,598.55,241.34" stroke="#000000" stroke-width="8" fill="none" stroke-dasharray="1016.8580322265625 1016.8580322265625" stroke-dashoffset="1017"></path>
+<path id="logo-line2" d="M5.9,266.43C5.9,266.43,10.330000000000002,310.95666666666665,33.21,284.88C56.09,258.80333333333334,112.05833333333334,120.17833333333333,143.18,109.97C174.30166666666668,99.76166666666667,200.13666666666666,219.07833333333332,219.94,223.63C239.74333333333334,228.18166666666667,249.82333333333332,141.46333333333334,262,137.28C274.1766666666667,133.09666666666666,278.23833333333334,207.01833333333335,293,198.53C307.76166666666666,190.04166666666666,327.32166666666666,78.35333333333332,350.57,86.35C373.8183333333333,94.34666666666666,403.46000000000004,241.83499999999998,432.49,246.51C461.52,251.185,502.9766666666667,123.01166666666667,524.75,114.4C546.5233333333333,105.78833333333334,563.13,194.84,563.13,194.84" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="1147.2138671875 1147.2138671875" stroke-dashoffset="1150"></path>
+<path id="logo-line3" d="M44.28,234.7C44.28,234.7,49.080000000000005,277.99333333333334,71.59,251.67C94.1,225.34666666666666,148.09666666666666,88.44500000000001,179.34,76.76C210.58333333333334,65.075,238.87666666666667,171.105,259.05,181.56C279.22333333333336,192.01500000000001,288.0783333333333,142.32,300.38,139.49C312.6816666666667,136.66000000000003,317.6066666666667,186.10666666666668,332.86,164.58C348.11333333333334,143.05333333333334,368.8983333333333,1.7183333333333355,391.9,10.33C414.90166666666664,18.941666666666663,441.84,204.68666666666667,470.87,216.25C499.90000000000003,227.81333333333333,544.0616666666667,89.18166666666666,566.08,79.71C588.0983333333334,70.23833333333333,602.98,159.42,602.98,159.42" stroke="#000000" stroke-width="3" fill="none" stroke-dasharray="1166.1278076171875 1166.1278076171875" stroke-dashoffset="1170"></path>
+<path id="logo-line4" d="M31.74,267.17C31.74,267.17,35.185,311.45,58.31,284.88C81.435,258.31,139.24666666666667,119.55833333333334,170.49,107.75C201.73333333333335,95.94166666666666,226.21166666666667,203.205,245.77,214.03C265.3283333333333,224.855,275.0483333333333,175.5283333333333,287.84,172.7C300.63166666666666,169.87166666666667,307.02166666666665,204.56333333333333,322.52,197.06C338.0183333333333,189.55666666666667,357.82666666666665,119.19333333333334,380.83,127.68C403.8333333333333,136.16666666666669,432.00333333333333,250.56333333333333,460.54,247.98C489.0766666666667,245.39666666666665,531.5083333333333,122.75833333333334,552.05,112.18C572.5916666666666,101.60166666666667,583.79,184.51,583.79,184.51" stroke="#000000" stroke-width="1" fill="none" stroke-dasharray="1000.6301879882812 1000.6301879882812" stroke-dashoffset="1000"></path>
+<text id="logo-text" y="380" x="610" font-family="Lato" font-size="65px" style="font-weight: 300;letter-spacing: 0.3rem;" text-anchor="end"><b>Farmer Protest</b></text>
+</svg>
+<div>
+</td>
+<td style="text-align: right;">
+<img style="height: 84px; margin-right: 44px;" src="static/images/tracts.gif"  alt="Owl Image">
+</td>
+</tr>
+</table>
+</div>
+
+
+	
+	<!--End-->
+	
+	
+	<div id="owl-demo">
+              
+      <div class="item"><img src="static/images/1.jpg"  alt="Owl Image"></div>
+	  <div class="item"><img src="static/images/2.jpg"  alt="Owl Image"></div>
+	  <div class="item"><img src="static/images/3.jpg"  alt="Owl Image"></div>
+	  <div class="item"><img src="static/images/4.jpg"  alt="Owl Image"></div>
+	  <div class="item"><img src="static/images/5.jpg"  alt="Owl Image"></div>
+	  <div class="item"><img src="static/images/6.jpg"  alt="Owl Image"></div>
+      
+    </div>
+    
+   
+
+	
+	
+	<div class="navbar">
+	<ul class="header-links">
+		<li><a href="{{ url_for('.home') }}">Home</a></li>
+		<li><a href="{{ url_for('.testimonials') }}">Testimonials</a></li>
+		<li><a href="{{ url_for('.products') }}">Our Products</a></li>
+		
+	</ul>
+	
+	
+	
+	</div>
+</div>
+</div>
